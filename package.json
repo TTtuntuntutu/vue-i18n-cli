@@ -1,0 +1,45 @@
+{
+  "name": "@tuya-fe/mondo-cli",
+  "version": "1.0.0",
+  "description": "Command line tool to retrieve Chinese in Vue2.x project",
+  "main": "index.js",
+  "scripts": {
+    "dev": "tsc --watch",
+    "prepublish": "tsc"
+  },
+  "author": "Harden",
+  "license": "ISC",
+  "bin": {
+    "mondo": "dist/index.js"
+  },
+  "dependencies": {
+    "acorn": "^7.3.1",
+    "acorn-jsx": "^5.2.0",
+    "d3-dsv": "^2.0.0",
+    "fs-extra": "^9.0.1",
+    "globby": "^11.0.1",
+    "google-translate": "^3.0.0",
+    "lodash": "^4.17.19",
+    "md5": "^2.3.0",
+    "ora": "^5.1.0",
+    "parse5": "^6.0.1",
+    "pinyin": "^2.9.1",
+    "randomstring": "^1.1.5",
+    "slash2": "^2.0.0",
+    "vue-template-compiler": "^2.6.11"
+  },
+  "devDependencies": {
+    "@tuya-fe/prettier-config": "^0.2.0",
+    "@types/commander": "^2.12.2",
+    "@types/lodash": "^4.14.158",
+    "@types/node": "^14.0.25",
+    "@typescript-eslint/eslint-plugin": "^3.7.0",
+    "@typescript-eslint/parser": "^3.7.0",
+    "commander": "^6.0.0",
+    "eslint": "^7.5.0",
+    "eslint-config-prettier": "^6.11.0",
+    "eslint-plugin-prettier": "^3.1.4",
+    "prettier": "^2.0.5",
+    "typescript": "^3.9.7"
+  }
+}
