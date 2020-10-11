@@ -1,0 +1,79 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.findUnUsed = void 0;
+/**
+ * @author Harden
+ * @description 查找未使用的 key，仅输出，不做剔除
+ */
+const fs = require("fs");
+const _ = require("lodash");
+const path = require("path");
+const const_1 = require("./const");
+const file_1 = require("./extract/file");
+const getLangData_1 = require("./extract/getLangData");
+/**
+ * 输出未使用keys
+ */
+function findUnUsed(replace) {
+    const allMessages = getLangData_1.getFlattenLangData();
+    const allKeys = Object.keys(allMessages);
+    const allUsedKeys = findUsedKeys('./src');
+    const allUnUsedKeys = allKeys.filter((k) => !allUsedKeys.includes(k));
+    console.log(allUnUsedKeys);
+    replace && deleteUnusedKeys(allUnUsedKeys);
+}
+exports.findUnUsed = findUnUsed;
+/**
+ * 获取项目中使用keys
+ * @param fileName 路径
+ */
+function findUsedKeys(fileName) {
+    if (!fs.existsSync(fileName))
+        return;
+    const usedKeys = [];
+    if (file_1.isFile(fileName)) {
+        usedKeys.push(...check(fileName));
+    }
+    if (file_1.isDirectory(fileName)) {
+        const files = fs.readdirSync(fileName).filter((file) => {
+            return !file.startsWith('.') && !['node_modules', 'build', 'dist'].includes(file);
+        });
+        files.forEach(function (val) {
+            const temp = path.join(fileName, val);
+            usedKeys.push(...findUsedKeys(temp));
+        });
+    }
+    return usedKeys;
+}
+/**
+ * 删除未使用的keys
+ * @param keys key集合
+ */
+function deleteUnusedKeys(keys) {
+    keys.forEach((keyValue) => {
+        const [fileName, ...fullKeyArrs] = keyValue.split('.');
+        const fullKey = fullKeyArrs.join('.');
+        for (const [, root] of Object.entries(const_1.LAND_DIR)) {
+            const targetFilename = `${root}/${fileName}.json`;
+            const mainContent = getLangData_1.getFileLangData(targetFilename);
+            _.unset(mainContent, fullKey);
+            fs.writeFileSync(targetFilename, file_1.prettierFile(`${JSON.stringify(mainContent)}`));
+        }
+    });
+}
+/**
+ * 获取当前文件下keys集合
+ * @param fileName 路径
+ */
+function check(fileName) {
+    const minifyReg = /\s+|[\r\n]/gm;
+    const keyReg = /(\$t\(|path=)('|")([a-zA-Z0-9.]+)/gm;
+    const code = file_1.readFile(fileName).replace(minifyReg, '');
+    const sum = [];
+    let arr;
+    while ((arr = keyReg.exec(code)) !== null) {
+        sum.push(arr[3]);
+    }
+    return sum;
+}
+//# sourceMappingURL=unused.js.map
