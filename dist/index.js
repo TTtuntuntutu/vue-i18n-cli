@@ -7,6 +7,7 @@ const export_1 = require("./export");
 const extract_1 = require("./extract/extract");
 const import_1 = require("./import");
 const unused_1 = require("./unused");
+const unscanned_1 = require("./unscanned");
 /**
  * 进度条加载
  * @param text
@@ -24,7 +25,8 @@ commander
     .option('--extract [scanPath] [ignorePaths...]', '提取指定文件夹下的中文')
     .option('--export [file] [lang]', '导出未翻译的文案')
     .option('--import [file] [lang]', '导入翻译文案')
-    .option('--unused [replace]', '导出未使用的文案')
+    .option('--unused [isDelete]', '查询未使用的文案，支持自动删除')
+    .option('--unscanned [scanPath] [ignorePaths...]', '查询指定文件夹下，仍存在中文的文件')
     .parse(process.argv);
 if (commander.extract) {
     if (commander.extract === true) {
@@ -56,10 +58,18 @@ if (commander.import) {
     });
 }
 if (commander.unused) {
-    console.log(commander.unused);
-    console.log(commander.args[0]);
+    const isDelete = ['y', 'Y', 'yes', 'Yes', 'YES'].includes(commander.unused);
     spining('导出未使用的文案', () => {
-        unused_1.findUnUsed(commander.unused === true ? true : false);
+        unused_1.findUnUsed(isDelete);
     });
+}
+if (commander.unscanned) {
+    if (commander.extract === true) {
+        unscanned_1.findUnScanned();
+    }
+    else {
+        const [scanPath, ...ignorePaths] = commander.unscanned;
+        unscanned_1.findUnScanned(scanPath, ignorePaths);
+    }
 }
 //# sourceMappingURL=index.js.map

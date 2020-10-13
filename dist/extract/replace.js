@@ -114,6 +114,7 @@ function replaceAndUpdate(filePath, arg, key, validateDuplicate) {
             break;
         case Situation.TemplateReplace:
             newCode = `${code.slice(0, start)}{{${text}}}${code.slice(end)}`;
+            console.log(`${filePath} may need scan again!`);
             break;
         case Situation.TemplateAttrString:
             newCode = `${code.slice(0, start)}:${attrName}="$t('${key}')"${code.slice(end)}`;

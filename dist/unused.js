@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.findUnUsed = void 0;
 /**
  * @author Harden
- * @description 查找未使用的 key，仅输出，不做剔除
+ * @description 查找未使用的 key
  */
 const fs = require("fs");
 const _ = require("lodash");
@@ -13,14 +13,17 @@ const file_1 = require("./extract/file");
 const getLangData_1 = require("./extract/getLangData");
 /**
  * 输出未使用keys
+ * @param isDelete 是否自动删除不需要的翻译文案
  */
-function findUnUsed(replace) {
+function findUnUsed(isDelete) {
     const allMessages = getLangData_1.getFlattenLangData();
     const allKeys = Object.keys(allMessages);
     const allUsedKeys = findUsedKeys('./src');
     const allUnUsedKeys = allKeys.filter((k) => !allUsedKeys.includes(k));
     console.log(allUnUsedKeys);
-    replace && deleteUnusedKeys(allUnUsedKeys);
+    if (isDelete) {
+        deleteUnusedKeys(allUnUsedKeys);
+    }
 }
 exports.findUnUsed = findUnUsed;
 /**
@@ -68,10 +71,12 @@ function deleteUnusedKeys(keys) {
 function check(fileName) {
     const minifyReg = /\s+|[\r\n]/gm;
     const keyReg = /(\$t\(|path=)('|")([a-zA-Z0-9.]+)/gm;
+    // 压缩字符串代码
     const code = file_1.readFile(fileName).replace(minifyReg, '');
     const sum = [];
     let arr;
     while ((arr = keyReg.exec(code)) !== null) {
+        // 捕获第3个括号，即使用key的名字
         sum.push(arr[3]);
     }
     return sum;

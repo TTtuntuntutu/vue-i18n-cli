@@ -26,13 +26,13 @@ function deduplicateStr(matches) {
 
   return repeatMatches.length
     ? matches.filter((m) => {
-      const index = repeatMatches.findIndex(
-        (r) =>
-          m.text === r.text && m.range.start === r.range.start && m.range.end === r.range.end,
-      )
+        const index = repeatMatches.findIndex(
+          (r) =>
+            m.text === r.text && m.range.start === r.range.start && m.range.end === r.range.end,
+        )
 
-      return !~index
-    })
+        return !~index
+      })
     : matches
 }
 
@@ -162,7 +162,7 @@ function findTextInVueTemp(ast: compilerVue.ASTElement) {
             }
           }
         }
-      } else {
+      } else if (DOUBLE_BYTE_REGEX.test(text)) {
         const newText = text.replace(/{{([^{}]+)}}/gm, (match, p1) => `\${${p1}}`)
         arr.push({
           text: `\`${newText}\``,

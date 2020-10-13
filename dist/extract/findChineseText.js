@@ -142,7 +142,7 @@ function findTextInVueTemp(ast) {
                     }
                 }
             }
-            else {
+            else if (const_1.DOUBLE_BYTE_REGEX.test(text)) {
                 const newText = text.replace(/{{([^{}]+)}}/gm, (match, p1) => `\${${p1}}`);
                 arr.push({
                     text: `\`${newText}\``,

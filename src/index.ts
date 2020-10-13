@@ -6,6 +6,7 @@ import { exportMessages } from './export'
 import { extractAll } from './extract/extract'
 import { importMessages } from './import'
 import { findUnUsed } from './unused'
+import { findUnScanned } from './unscanned'
 
 /**
  * 进度条加载
@@ -25,7 +26,8 @@ commander
   .option('--extract [scanPath] [ignorePaths...]', '提取指定文件夹下的中文')
   .option('--export [file] [lang]', '导出未翻译的文案')
   .option('--import [file] [lang]', '导入翻译文案')
-  .option('--unused [replace]', '导出未使用的文案')
+  .option('--unused [isDelete]', '查询未使用的文案，支持自动删除')
+  .option('--unscanned [scanPath] [ignorePaths...]', '查询指定文件夹下，仍存在中文的文件')
   .parse(process.argv)
 
 if (commander.extract) {
@@ -58,10 +60,18 @@ if (commander.import) {
 }
 
 if (commander.unused) {
-  console.log(commander.unused)
-  console.log(commander.args[0])
+  const isDelete = ['y', 'Y', 'yes', 'Yes', 'YES'].includes(commander.unused)
 
   spining('导出未使用的文案', () => {
-    findUnUsed(commander.unused === true ? true : false)
+    findUnUsed(isDelete)
   })
+}
+
+if (commander.unscanned) {
+  if (commander.extract === true) {
+    findUnScanned()
+  } else {
+    const [scanPath, ...ignorePaths] = commander.unscanned
+    findUnScanned(scanPath, ignorePaths)
+  }
 }
