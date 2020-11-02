@@ -210,7 +210,7 @@ new Vue({
     ) 
     ```
 
-2. v-if、v-else-if 判断逻辑中存中文需要手动替换，或者将该逻辑放在vue script中，因为ast中拿不到`v-if`的位置：
+2. `v-if`、`v-else-if` 判断逻辑中存中文需要手动替换，或者将该逻辑放在vue script中，因为ast中拿不到`v-if`的位置：
 
    ```html
    <p v-if="greeting === '你好'">
