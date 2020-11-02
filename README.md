@@ -2,7 +2,7 @@
 
 方案解决的问题：Vue2.x项目的多语言解决方案。基于 [vue-i18n](https://kazupon.github.io/vue-i18n/zh/introduction.html) ，命令行工具 mondo-cli 一键提取中文，自动生成key并且替换，一键导入导出翻译文件，查询不再使用文案，同时使用[vscode 插件 i18n Ally](https://marketplace.visualstudio.com/items?itemName=antfu.i18n-ally) 帮助查看、管理文案。
 
-
+![locale](/img/extract.gif)
 
 方案提供的能力：
 
@@ -17,10 +17,9 @@
 
 方案目前存在的问题：
 
-- [ ] 文案使用国际化 Key 代替后，文案搜索麻烦，需要由文案找到key，再定位具体位置
-- [ ] 未自动化处理需要[组件插值](https://kazupon.github.io/vue-i18n/zh/guide/interpolation.html#%E5%9F%BA%E6%9C%AC%E7%94%A8%E6%B3%95)场景（可做，但场景不多）
-- [ ] 代码中的中文提取存在个别边缘情况未考虑
-- [ ] 翻译文件给到后，还要UI调整，这里有时间差
+- [ ] 搜索麻烦：需要先通过文案找到key，再通过key定位具体位置
+- [ ] 未考虑[组件插值](https://kazupon.github.io/vue-i18n/zh/guide/interpolation.html#%E5%9F%BA%E6%9C%AC%E7%94%A8%E6%B3%95)场景（可做，但场景不多）
+- [ ] 中文文案个别边缘情况未考虑
 
 
 
