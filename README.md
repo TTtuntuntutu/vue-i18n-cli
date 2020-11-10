@@ -3,6 +3,7 @@
 方案解决的问题：Vue2.x项目的多语言解决方案。基于 [vue-i18n](https://kazupon.github.io/vue-i18n/zh/introduction.html) ，命令行工具 mondo-cli 一键提取中文，自动生成key并且替换，一键导入导出翻译文件，查询不再使用文案，同时使用[vscode 插件 i18n Ally](https://marketplace.visualstudio.com/items?itemName=antfu.i18n-ally) 帮助查看、管理文案。
 
 ![locale](/img/extract.gif)
+
 (p.s. `if(gif不清晰){打开img文件夹有视频}` )
 
 方案提供的能力：
