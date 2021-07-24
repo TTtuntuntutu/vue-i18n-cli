@@ -189,7 +189,7 @@ new Vue({
    ```javascript
    export const mainInfoLanguage = {
      tuya: {
-       '杭州涂鸦信息技术有限公司': 'HANGZHOU TUYA INFORMATION TECHNOLOGY CO., LTD'
+       '你好世界': 'Hello World!'
      }
    }
    ```
