@@ -21,12 +21,12 @@ function spining(text, callback) {
     spinner.succeed(`${text}成功`);
 }
 commander
-    .version('1.0.0')
-    .option('--extract [scanPath] [ignorePaths...]', '提取指定文件夹下的中文')
-    .option('--export [file] [lang]', '导出未翻译的文案')
-    .option('--import [file] [lang]', '导入翻译文案')
-    .option('--unused [isDelete]', '查询未使用的文案，支持自动删除')
-    .option('--unscanned [scanPath] [ignorePaths...]', '查询指定文件夹下，仍存在中文的文件')
+    .version("1.0.0")
+    .option("--extract [scanPath] [ignorePaths...]", "提取指定文件夹下的中文")
+    .option("--export [file] [lang]", "导出未翻译的文案")
+    .option("--import [file] [lang]", "导入翻译文案")
+    .option("--unused [isDelete]", "查询未使用的文案，支持自动删除")
+    .option("--unscanned [scanPath] [ignorePaths...]", "查询指定文件夹下，仍存在中文的文件")
     .parse(process.argv);
 if (commander.extract) {
     if (commander.extract === true) {
@@ -38,7 +38,7 @@ if (commander.extract) {
     }
 }
 if (commander.export) {
-    spining('导出未翻译文案', () => {
+    spining("导出未翻译文案", () => {
         if (commander.export === true && commander.args.length === 0) {
             export_1.exportMessages();
         }
@@ -48,9 +48,9 @@ if (commander.export) {
     });
 }
 if (commander.import) {
-    spining('导入翻译文案', () => {
+    spining("导入翻译文案", () => {
         if (commander.import === true || commander.args.length === 0) {
-            console.log('请按格式输入：--import [file] [lang]');
+            console.log("请按格式输入：--import [file] [lang]");
         }
         else if (commander.args) {
             import_1.importMessages(commander.import, commander.args[0]);
@@ -58,8 +58,8 @@ if (commander.import) {
     });
 }
 if (commander.unused) {
-    const isDelete = ['y', 'Y', 'yes', 'Yes', 'YES'].includes(commander.unused);
-    spining('导出未使用的文案', () => {
+    const isDelete = ["y", "Y", "yes", "Yes", "YES"].includes(commander.unused);
+    spining("导出未使用的文案", () => {
         unused_1.findUnUsed(isDelete);
     });
 }

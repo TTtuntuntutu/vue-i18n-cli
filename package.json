@@ -10,7 +10,7 @@
   "author": "Harden",
   "license": "ISC",
   "bin": {
-    "mondo": "dist/index.js"
+    "extract": "dist/index.js"
   },
   "dependencies": {
     "acorn": "^7.3.1",

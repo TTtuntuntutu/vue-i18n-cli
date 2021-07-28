@@ -8,17 +8,17 @@ exports.DOUBLE_BYTE_REGEX_GREEDY = /[^\x00-\xff]+/g;
  * 配置数据
  */
 exports.I18N_GLOB = {
-    zh: './locale/zh/**/*.json',
-    en: './locale/en/**/*.json',
+    zh: "./locale/zh/**/*.json",
+    en: "./locale/en/**/*.json",
 };
 exports.LAND_DIR = {
-    zh: './locale/zh',
-    en: './locale/en',
+    zh: "./locale/zh",
+    en: "./locale/en",
 };
-exports.LAND_ROOT = 'index';
+exports.LAND_ROOT = "index";
 // window[i18n_name]=i18n对象
-exports.I18N_NAME = 'i18n';
+exports.I18N_NAME = "i18n";
 // 词库导出
-exports.EXPORT_LANGS = ['en'];
-exports.DIST_DIR = './export';
+exports.EXPORT_LANGS = ["en"];
+exports.DIST_DIR = "./export";
 //# sourceMappingURL=const.js.map

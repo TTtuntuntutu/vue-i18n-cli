@@ -14,10 +14,11 @@ const prettier = require("prettier");
  * @param  {string} fullPath 路径
  */
 function getSpecifiedFiles(fullPath, ignoreFullPaths) {
-    //增加文件处理能力
+    // 支持fullPath是文件url
     if (fs.statSync(fullPath).isFile() && !ignoreFullPaths.includes(fullPath)) {
         return [fullPath];
     }
+    // 支持fullPath是文件夹url
     return fs.readdirSync(fullPath).reduce((files, file) => {
         const name = path.join(fullPath, file);
         if (ignoreFullPaths.includes(name))
@@ -40,7 +41,7 @@ exports.getSpecifiedFiles = getSpecifiedFiles;
  */
 function readFile(fileName) {
     if (fs.existsSync(fileName)) {
-        return fs.readFileSync(fileName, 'utf-8');
+        return fs.readFileSync(fileName, "utf-8");
     }
 }
 exports.readFile = readFile;
@@ -81,7 +82,7 @@ exports.isFile = isFile;
 function prettierFile(fileContent) {
     try {
         return prettier.format(fileContent, {
-            parser: 'json',
+            parser: "json",
         });
     }
     catch (e) {

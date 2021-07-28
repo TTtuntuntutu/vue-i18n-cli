@@ -22,14 +22,15 @@ function deduplicateStr(matches) {
         : matches;
 }
 /**
- * 查找 Vue 中文
+ * 查找 Vue文件 中文
  * @param code
  */
 function findTextInVue(code) {
-    const { ast: templateInVue } = compilerVue.compile(code.toString(), {
-        outputSourceRange: true,
-    });
-    const textsInTemplate = findTextInVueTemp(templateInVue);
+    // const { ast: templateInVue } = compilerVue.compile(code.toString(), {
+    //   outputSourceRange: true,
+    // });
+    // const textsInTemplate = findTextInVueTemp(templateInVue);
+    const textsInTemplate = [];
     let textsInScript = [];
     const sfc = compilerVue.parseComponent(code.toString());
     if (sfc.script) {
@@ -37,10 +38,7 @@ function findTextInVue(code) {
     }
     return [...textsInScript, ...textsInTemplate];
 }
-/**
- * 查找 Vue-template 中文
- * @param code
- */
+// 查找 Vue文件<template> 中文
 function findTextInVueTemp(ast) {
     const arr = [];
     function emun(ast) {
@@ -51,8 +49,8 @@ function findTextInVueTemp(ast) {
                 const { name, value, start, end } = attr;
                 if (!value.match(const_1.DOUBLE_BYTE_REGEX))
                     return;
-                // case 普通属性字符串
-                if (!name.includes(':') && !name.startsWith('@')) {
+                // case 属性值是字符串，换言之，属性不是指令 or 自定义指令
+                if (!name.includes("v-") && !name.includes(":") && !name.startsWith("@")) {
                     arr.push({
                         text: value.trim(),
                         range: {
@@ -60,7 +58,7 @@ function findTextInVueTemp(ast) {
                             end,
                         },
                         attrName: name,
-                        type: ['template', 'attrString'],
+                        type: ["template", "attrString"],
                     });
                 }
                 else {
@@ -73,7 +71,7 @@ function findTextInVueTemp(ast) {
                                 start: end - value.length - 1 + result.index,
                                 end: end - value.length - 1 + regx.lastIndex,
                             };
-                            const ifExprInterpolation = result[0].startsWith('`');
+                            const ifExprInterpolation = result[0].startsWith("`");
                             if (ifExprInterpolation) {
                                 let index = 0;
                                 // case 属性表达式内模版字符串
@@ -83,7 +81,7 @@ function findTextInVueTemp(ast) {
                                     }),
                                     rawText: text,
                                     range,
-                                    type: ['template', 'exprInterpolation'],
+                                    type: ["template", "exprInterpolation"],
                                 });
                             }
                             else {
@@ -91,7 +89,7 @@ function findTextInVueTemp(ast) {
                                 arr.push({
                                     text: text.trim(),
                                     range,
-                                    type: ['template', 'exprString'],
+                                    type: ["template", "exprString"],
                                 });
                             }
                         }
@@ -102,7 +100,7 @@ function findTextInVueTemp(ast) {
         if (ast.expression) {
             const { start, end, text } = ast;
             const tokens = ast.tokens.filter((t) => {
-                if (typeof t === 'string') {
+                if (typeof t === "string") {
                     return t.trim();
                 }
                 else {
@@ -120,7 +118,7 @@ function findTextInVueTemp(ast) {
                             start: start + result.index,
                             end: start + regx.lastIndex,
                         };
-                        const ifExprInterpolation = result[0].startsWith('`');
+                        const ifExprInterpolation = result[0].startsWith("`");
                         if (ifExprInterpolation) {
                             let index = 0;
                             arr.push({
@@ -129,14 +127,14 @@ function findTextInVueTemp(ast) {
                                 }),
                                 rawText: text,
                                 range,
-                                type: ['template', 'exprInterpolation'],
+                                type: ["template", "exprInterpolation"],
                             });
                         }
                         else {
                             arr.push({
                                 text,
                                 range,
-                                type: ['template', 'exprString'],
+                                type: ["template", "exprString"],
                             });
                         }
                     }
@@ -150,18 +148,18 @@ function findTextInVueTemp(ast) {
                         start,
                         end,
                     },
-                    type: ['template', 'replace'],
+                    type: ["template", "replace"],
                     notNewKey: true,
                 });
             }
         }
         else if (!ast.expression && ast.text) {
+            // case 普通文本，保留整段文本
             ast.text.match(const_1.DOUBLE_BYTE_REGEX) &&
-                // 普通文本
                 arr.push({
                     text: ast.text.trim(),
                     range: { start: ast.start, end: ast.end },
-                    type: ['template', 'string'],
+                    type: ["template", "string"],
                 });
         }
         else {
@@ -186,13 +184,10 @@ function findTextInVueTemp(ast) {
     emun(ast);
     return arr;
 }
-/**
- * 查找 Vue-script 中文
- * @param code
- */
+// 查找 Vue文件<script> 中文
 function findTextInVueJS(code, startNum) {
     let matches = [];
-    const ast = ts.createSourceFile('', code, ts.ScriptTarget.ES2015, true, ts.ScriptKind.TSX);
+    const ast = ts.createSourceFile("", code, ts.ScriptTarget.ES2015, true, ts.ScriptKind.TSX);
     let ifInsideExport = false;
     function visit(node) {
         switch (node.kind) {
@@ -209,21 +204,21 @@ function findTextInVueJS(code, startNum) {
                     const start = node.getStart();
                     const end = node.getEnd();
                     const range = { start: start + startNum, end: end + startNum };
-                    const tag = ifInsideExport ? 'script' : 'javascript';
+                    const tag = ifInsideExport ? "script" : "javascript";
                     const ifInJsxAttribute = node.parent.kind === ts.SyntaxKind.JsxAttribute;
-                    const ifInPropsDefault = ifInsideExport && code.slice(start - 10, start - 1).includes('default');
+                    const ifInPropsDefault = ifInsideExport && code.slice(start - 10, start - 1).includes("default");
                     if (ifInPropsDefault) {
                         matches.push({
                             range,
                             text: text.trim(),
-                            type: ['script', 'props'],
+                            type: ["script", "props"],
                         });
                     }
                     else {
                         matches.push({
                             range,
                             text: text.trim(),
-                            type: [tag, ifInJsxAttribute ? 'jsx' : 'string'],
+                            type: [tag, ifInJsxAttribute ? "jsx" : "string"],
                         });
                     }
                 }
@@ -234,15 +229,17 @@ function findTextInVueJS(code, startNum) {
                 children.forEach((child) => {
                     if (child.kind === ts.SyntaxKind.JsxText) {
                         const text = child.getText();
+                        console.log("ts.SyntaxKind.JsxText");
+                        console.log(text);
                         if (text.match(const_1.DOUBLE_BYTE_REGEX)) {
                             const start = child.getStart();
                             const end = child.getEnd();
                             const range = { start: start + startNum, end: end + startNum };
-                            const tag = ifInsideExport ? 'script' : 'javascript';
+                            const tag = ifInsideExport ? "script" : "javascript";
                             matches.push({
                                 range,
                                 text: text.trim(),
-                                type: [tag, 'jsx'],
+                                type: [tag, "jsx"],
                             });
                         }
                     }
@@ -254,13 +251,13 @@ function findTextInVueJS(code, startNum) {
                 const templateContent = code
                     .slice(pos, end)
                     .toString()
-                    .replace(/\$\{[^\}]+\}/, '');
+                    .replace(/\$\{[^\}]+\}/, "");
                 if (templateContent.match(const_1.DOUBLE_BYTE_REGEX)) {
                     const start = node.getStart();
                     const end = node.getEnd();
                     const range = { start: start + startNum, end: end + startNum };
                     const text = code.slice(start, end);
-                    const tag = ifInsideExport ? 'script' : 'javascript';
+                    const tag = ifInsideExport ? "script" : "javascript";
                     let index = 0;
                     matches.push({
                         text: text.slice(1, -1).replace(/\${([^\}]+)\}/g, () => {
@@ -268,7 +265,7 @@ function findTextInVueJS(code, startNum) {
                         }),
                         rawText: text.slice(1, -1),
                         range,
-                        type: [tag, 'exprTemplate'],
+                        type: [tag, "exprTemplate"],
                     });
                     //收集会重复出现的StringLiteral
                     let result;
@@ -294,11 +291,11 @@ function findTextInVueJS(code, startNum) {
                     const start = node.getStart();
                     const end = node.getEnd();
                     const range = { start: start + startNum, end: end + startNum };
-                    const tag = ifInsideExport ? 'script' : 'javascript';
+                    const tag = ifInsideExport ? "script" : "javascript";
                     matches.push({
                         range,
                         text: code.slice(start + 1, end - 1).trim(),
-                        type: [tag, 'string'],
+                        type: [tag, "string"],
                     });
                 }
             }
@@ -312,7 +309,7 @@ function findTextInVueJS(code, startNum) {
 }
 function findTextInJS(code) {
     let matches = [];
-    const ast = ts.createSourceFile('', code, ts.ScriptTarget.ES2015, true, ts.ScriptKind.TSX);
+    const ast = ts.createSourceFile("", code, ts.ScriptTarget.ES2015, true, ts.ScriptKind.TSX);
     function visit(node) {
         switch (node.kind) {
             case ts.SyntaxKind.StringLiteral: {
@@ -323,19 +320,19 @@ function findTextInJS(code) {
                     const end = node.getEnd();
                     const range = { start, end };
                     const ifInJsxAttribute = node.parent.kind === ts.SyntaxKind.JsxAttribute;
-                    const ifInPropsDefault = code.slice(start - 10, start - 1).includes('default');
+                    const ifInPropsDefault = code.slice(start - 10, start - 1).includes("default");
                     if (ifInPropsDefault) {
                         matches.push({
                             range,
                             text: text.trim(),
-                            type: ['javascript', 'props'],
+                            type: ["javascript", "props"],
                         });
                     }
                     else {
                         matches.push({
                             range,
                             text: text.trim(),
-                            type: ['javascript', ifInJsxAttribute ? 'jsx' : 'string'],
+                            type: ["javascript", ifInJsxAttribute ? "jsx" : "string"],
                         });
                     }
                 }
@@ -353,7 +350,7 @@ function findTextInJS(code) {
                             matches.push({
                                 range,
                                 text: text.trim(),
-                                type: ['javascript', 'jsx'],
+                                type: ["javascript", "jsx"],
                             });
                         }
                     }
@@ -365,7 +362,7 @@ function findTextInJS(code) {
                 const templateContent = code
                     .slice(pos, end)
                     .toString()
-                    .replace(/\$\{[^\}]+\}/, '');
+                    .replace(/\$\{[^\}]+\}/, "");
                 if (templateContent.match(const_1.DOUBLE_BYTE_REGEX)) {
                     const start = node.getStart();
                     const end = node.getEnd();
@@ -378,7 +375,7 @@ function findTextInJS(code) {
                         }),
                         rawText: text.slice(1, -1),
                         range,
-                        type: ['javascript', 'exprTemplate'],
+                        type: ["javascript", "exprTemplate"],
                     });
                     //收集会重复出现的StringLiteral
                     let result;
@@ -407,7 +404,7 @@ function findTextInJS(code) {
                     matches.push({
                         range,
                         text: code.slice(start, end).trim(),
-                        type: ['javascript', 'string'],
+                        type: ["javascript", "string"],
                     });
                 }
             }
@@ -421,14 +418,14 @@ function findTextInJS(code) {
 }
 /**
  * 递归匹配代码的中文
- * @param code
- * @param file
+ * @param code  代码字符串
+ * @param fileName 文件名称
  */
 function findChineseText(code, fileName) {
-    if (fileName.endsWith('.vue')) {
+    if (fileName.endsWith(".vue")) {
         return findTextInVue(code);
     }
-    if (fileName.endsWith('.js')) {
+    if (fileName.endsWith(".js")) {
         return findTextInJS(code);
     }
 }

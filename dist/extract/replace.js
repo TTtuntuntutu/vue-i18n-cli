@@ -32,36 +32,36 @@ var Situation;
  * @param types 中文场景标记
  */
 function getSituationType(types) {
-    if (types.includes('script')) {
-        if (types.includes('string'))
+    if (types.includes("script")) {
+        if (types.includes("string"))
             return Situation.ScriptString;
-        if (types.includes('jsx'))
+        if (types.includes("jsx"))
             return Situation.ScriptJsx;
-        if (types.includes('props'))
+        if (types.includes("props"))
             return Situation.ScriptProps;
-        if (types.includes('exprTemplate'))
+        if (types.includes("exprTemplate"))
             return Situation.ScriptExprTemplate;
     }
-    if (types.includes('javascript')) {
-        if (types.includes('string'))
+    if (types.includes("javascript")) {
+        if (types.includes("string"))
             return Situation.JavaScriptString;
-        if (types.includes('jsx'))
+        if (types.includes("jsx"))
             return Situation.JavaScriptJsx;
-        if (types.includes('props'))
+        if (types.includes("props"))
             return Situation.JavaScriptProps;
-        if (types.includes('exprTemplate'))
+        if (types.includes("exprTemplate"))
             return Situation.JavaScriptExprTemplate;
     }
-    if (types.includes('template')) {
-        if (types.includes('string'))
+    if (types.includes("template")) {
+        if (types.includes("string"))
             return Situation.TemplateString;
-        if (types.includes('replace'))
+        if (types.includes("replace"))
             return Situation.TemplateReplace;
-        if (types.includes('exprString'))
+        if (types.includes("exprString"))
             return Situation.TemplateExprString;
-        if (types.includes('attrString'))
+        if (types.includes("attrString"))
             return Situation.TemplateAttrString;
-        if (types.includes('exprInterpolation'))
+        if (types.includes("exprInterpolation"))
             return Situation.TemplateExprInterpolation;
     }
 }
@@ -93,7 +93,7 @@ function replaceAndUpdate(filePath, arg, key, validateDuplicate) {
             break;
         case Situation.ScriptExprTemplate: {
             const varInStrs = rawText.match(/(\$\{[^\}]+?\})/g).map((i) => i.slice(2, -1));
-            newCode = `${code.slice(0, start)}this.$t('${key}',[${varInStrs.join(',')}])${code.slice(end)}`;
+            newCode = `${code.slice(0, start)}this.$t('${key}',[${varInStrs.join(",")}])${code.slice(end)}`;
             console.log(`${filePath} may need scan again!`);
             break;
         }
@@ -105,7 +105,7 @@ function replaceAndUpdate(filePath, arg, key, validateDuplicate) {
             break;
         case Situation.JavaScriptExprTemplate: {
             const varInStrs = rawText.match(/(\$\{[^\}]+?\})/g).map((i) => i.slice(2, -1));
-            newCode = `${code.slice(0, start)}window.${const_1.I18N_NAME}.$t('${key}',[${varInStrs.join(',')}])${code.slice(end)}`;
+            newCode = `${code.slice(0, start)}window.${const_1.I18N_NAME}.$t('${key}',[${varInStrs.join(",")}])${code.slice(end)}`;
             console.log(`${filePath} may need scan again!`);
             break;
         }
@@ -124,7 +124,7 @@ function replaceAndUpdate(filePath, arg, key, validateDuplicate) {
             break;
         case Situation.TemplateExprInterpolation: {
             const varInStrs = rawText.match(/(\$\{[^\}]+?\})/g).map((i) => i.slice(2, -1));
-            newCode = `${code.slice(0, start)}$t('${key}',[${varInStrs.join(',')}])${code.slice(end)}`;
+            newCode = `${code.slice(0, start)}$t('${key}',[${varInStrs.join(",")}])${code.slice(end)}`;
             console.log(`${filePath} may need scan again!`);
             break;
         }
@@ -151,9 +151,9 @@ function updateLangFiles(keyValue, text, validateDuplicate) {
     if (!keyValue) {
         return;
     }
-    const [fileName, ...fullKeyArrs] = keyValue.split('.');
-    const fullKey = fullKeyArrs.join('.');
-    const targetFilename = `${const_1.LAND_DIR['zh']}/${fileName}.json`;
+    const [fileName, ...fullKeyArrs] = keyValue.split(".");
+    const fullKey = fullKeyArrs.join(".");
+    const targetFilename = `${const_1.LAND_DIR["zh"]}/${fileName}.json`;
     if (!fs.existsSync(targetFilename)) {
         fs.writeFileSync(targetFilename, generateNewLangFile(fullKey, text.trim()));
         console.log(`成功新建语言文件 ${targetFilename}`);
@@ -166,10 +166,10 @@ function updateLangFiles(keyValue, text, validateDuplicate) {
         }
         if (validateDuplicate && _.get(mainContent, fullKey) !== undefined) {
             console.log(`${targetFilename}.json 中已存在 key 为 \`${fullKey}\` 的翻译，请重新命名变量`);
-            throw new Error('duplicate');
+            throw new Error("duplicate");
         }
         // \n 会被自动转义成 \\n，这里转回来
-        text = text.replace(/\\n/gm, '\n');
+        text = text.replace(/\\n/gm, "\n");
         _.set(obj, fullKey, text.trim());
         fs.writeFileSync(targetFilename, file_1.prettierFile(`${JSON.stringify(mainContent)}`));
     }

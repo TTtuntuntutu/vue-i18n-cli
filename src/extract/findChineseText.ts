@@ -41,11 +41,13 @@ function deduplicateStr(matches) {
  * @param code
  */
 function findTextInVue(code: string) {
-  const { ast: templateInVue } = compilerVue.compile(code.toString(), {
-    outputSourceRange: true,
-  });
+  // const { ast: templateInVue } = compilerVue.compile(code.toString(), {
+  //   outputSourceRange: true,
+  // });
 
-  const textsInTemplate = findTextInVueTemp(templateInVue);
+  // const textsInTemplate = findTextInVueTemp(templateInVue);
+
+  const textsInTemplate = [];
 
   let textsInScript = [];
   const sfc = compilerVue.parseComponent(code.toString());
@@ -68,8 +70,8 @@ function findTextInVueTemp(ast: compilerVue.ASTElement) {
 
         if (!value.match(DOUBLE_BYTE_REGEX)) return;
 
-        // case 普通属性字符串
-        if (!name.includes(":") && !name.startsWith("@")) {
+        // case 属性值是字符串，换言之，属性不是指令 or 自定义指令
+        if (!name.includes("v-") && !name.includes(":") && !name.startsWith("@")) {
           arr.push({
             text: value.trim(),
             range: {
@@ -82,6 +84,7 @@ function findTextInVueTemp(ast: compilerVue.ASTElement) {
         } else {
           const regx = /\'[^']*\'|\"[^"]*\"|\`[^\`]*\`/gm;
           let result;
+
           while ((result = regx.exec(value))) {
             if (result && result[0].match(DOUBLE_BYTE_REGEX)) {
               const text = result[0].slice(1, -1);
@@ -172,8 +175,8 @@ function findTextInVueTemp(ast: compilerVue.ASTElement) {
         });
       }
     } else if (!ast.expression && ast.text) {
+      // case 普通文本，保留整段文本
       ast.text.match(DOUBLE_BYTE_REGEX) &&
-        // 普通文本
         arr.push({
           text: ast.text.trim(),
           range: { start: ast.start, end: ast.end },
@@ -199,6 +202,7 @@ function findTextInVueTemp(ast: compilerVue.ASTElement) {
         });
     }
   }
+
   emun(ast);
 
   return arr;
@@ -225,6 +229,7 @@ function findTextInVueJS(code: string, startNum: number) {
           const start = node.getStart();
           const end = node.getEnd();
           const range = { start: start + startNum, end: end + startNum };
+
           const tag = ifInsideExport ? "script" : "javascript";
           const ifInJsxAttribute = node.parent.kind === ts.SyntaxKind.JsxAttribute;
           const ifInPropsDefault =
@@ -252,6 +257,8 @@ function findTextInVueJS(code: string, startNum: number) {
         children.forEach((child) => {
           if (child.kind === ts.SyntaxKind.JsxText) {
             const text = child.getText();
+            console.log("ts.SyntaxKind.JsxText");
+            console.log(text);
 
             if (text.match(DOUBLE_BYTE_REGEX)) {
               const start = child.getStart();
