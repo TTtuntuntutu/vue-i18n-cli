@@ -2,11 +2,11 @@
 
 import * as commander from "commander";
 import * as ora from "ora";
-import { exportMessages } from "./export";
+import { exportMessages } from "./import-export/export";
 import { extractAll } from "./extract/extract";
-import { importMessages } from "./import";
-import { findUnUsed } from "./unused";
-import { findUnScanned } from "./unscanned";
+import { importMessages } from "./import-export/import";
+import { findUnUsed } from "./de-redundancy/unused";
+import { findUnScanned } from "./de-redundancy/unscanned";
 
 /**
  * 进度条加载
@@ -68,7 +68,7 @@ if (commander.unused) {
 }
 
 if (commander.unscanned) {
-  if (commander.extract === true) {
+  if (commander.unscanned === true) {
     findUnScanned();
   } else {
     const [scanPath, ...ignorePaths] = commander.unscanned;

@@ -4,7 +4,7 @@
 import * as _ from "lodash";
 import * as path from "path";
 import * as randomstring from "randomstring";
-import { LAND_ROOT } from "../const";
+import { LAND_ROOT } from "../config";
 import { findMatchKey, findMatchValue, textToPinyin } from "../utils";
 import { getSpecifiedFiles, readFile } from "./file";
 import { findChineseText, TextSnippet } from "./findChineseText";

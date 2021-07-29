@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
-import * as _ from 'lodash'
-import * as pinyin from 'pinyin'
+import * as _ from "lodash";
+import * as pinyin from "pinyin";
 
 /**
  * 根据中文文案生成拼音作为key
@@ -11,16 +11,16 @@ function textToPinyin(text: string): string {
     try {
       let value = pinyin(text, {
         style: pinyin.STYLE_NORMAL,
-      })
+      });
 
-      value = value.flat().join('')
+      value = value.flat().join("");
 
-      return value
+      return value;
     } catch (error) {
-      return ''
+      return "";
     }
   } else {
-    return ''
+    return "";
   }
 }
 
@@ -32,11 +32,11 @@ function textToPinyin(text: string): string {
 function findMatchKey(langObj: Record<string, string>, text: string): string | null {
   for (const key in langObj) {
     if (langObj[key] === text) {
-      return key
+      return key;
     }
   }
 
-  return null
+  return null;
 }
 
 /**
@@ -45,7 +45,7 @@ function findMatchKey(langObj: Record<string, string>, text: string): string | n
  * @param key
  */
 function findMatchValue(langObj: Record<string, string>, key: string): string {
-  return langObj[key]
+  return langObj[key];
 }
 
 /**
@@ -53,20 +53,20 @@ function findMatchValue(langObj: Record<string, string>, key: string): string {
  * @param obj 原始对象
  * @param prefix
  */
-function flatten(obj, prefix = ''): Record<string, string> {
-  const propName = prefix ? prefix + '.' : '',
-    ret = {}
+function flatten(obj, prefix = ""): Record<string, string> {
+  const propName = prefix ? prefix + "." : "",
+    ret = {};
 
   for (const attr in obj) {
     if (_.isArray(obj[attr])) {
-      ret[attr] = obj[attr].join(',')
-    } else if (typeof obj[attr] === 'object') {
-      _.extend(ret, flatten(obj[attr], propName + attr))
+      ret[attr] = obj[attr].join(",");
+    } else if (typeof obj[attr] === "object") {
+      _.extend(ret, flatten(obj[attr], propName + attr));
     } else {
-      ret[propName + attr] = obj[attr]
+      ret[propName + attr] = obj[attr];
     }
   }
-  return ret
+  return ret;
 }
 
 /**
@@ -75,15 +75,15 @@ function flatten(obj, prefix = ''): Record<string, string> {
 function traverse(obj, cb) {
   function traverseInner(obj, cb, path) {
     _.forEach(obj, (val, key) => {
-      if (typeof val === 'string') {
-        cb(val, [...path, key].join('.'))
-      } else if (typeof val === 'object' && val !== null) {
-        traverseInner(val, cb, [...path, key])
+      if (typeof val === "string") {
+        cb(val, [...path, key].join("."));
+      } else if (typeof val === "object" && val !== null) {
+        traverseInner(val, cb, [...path, key]);
       }
-    })
+    });
   }
 
-  traverseInner(obj, cb, [])
+  traverseInner(obj, cb, []);
 }
 
-export { textToPinyin, findMatchKey, findMatchValue, flatten, traverse }
+export { textToPinyin, findMatchKey, findMatchValue, flatten, traverse };

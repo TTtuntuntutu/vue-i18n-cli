@@ -3,11 +3,11 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const commander = require("commander");
 const ora = require("ora");
-const export_1 = require("./export");
+const export_1 = require("./import-export/export");
 const extract_1 = require("./extract/extract");
-const import_1 = require("./import");
-const unused_1 = require("./unused");
-const unscanned_1 = require("./unscanned");
+const import_1 = require("./import-export/import");
+const unused_1 = require("./de-redundancy/unused");
+const unscanned_1 = require("./de-redundancy/unscanned");
 /**
  * 进度条加载
  * @param text
@@ -64,7 +64,7 @@ if (commander.unused) {
     });
 }
 if (commander.unscanned) {
-    if (commander.extract === true) {
+    if (commander.unscanned === true) {
         unscanned_1.findUnScanned();
     }
     else {

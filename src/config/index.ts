@@ -2,6 +2,11 @@
 export const DOUBLE_BYTE_REGEX = /[^\x00-\xff]/g;
 export const DOUBLE_BYTE_REGEX_GREEDY = /[^\x00-\xff]+/g;
 
+// 语种对应中文文案
+export const langDisplayInTsv = {
+  zh: "中文",
+  en: "英文",
+};
 /**
  * 配置数据
  */
@@ -16,6 +21,7 @@ export const LAND_DIR = {
 export const LAND_ROOT = "index";
 // window[i18n_name]=i18n对象
 export const I18N_NAME = "i18n";
+
 // 词库导出
 export const EXPORT_LANGS = ["en"];
 export const DIST_DIR = "./export";

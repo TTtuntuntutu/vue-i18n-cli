@@ -6,7 +6,7 @@ exports.getFileLangData = exports.getFlattenLangData = void 0;
  */
 const fs = require("fs");
 const globby = require("globby");
-const const_1 = require("../const");
+const config_1 = require("../config");
 const utils_1 = require("../utils");
 /**
  * 获取文件对应语言的key集合
@@ -37,7 +37,7 @@ function getLangJson(fileName) {
     return jsObj;
 }
 function getLangData(lang) {
-    const paths = globby.sync(const_1.I18N_GLOB[lang]);
+    const paths = globby.sync(config_1.I18N_GLOB[lang]);
     const langObj = paths.reduce((prev, curr) => {
         const filename = curr
             .split("/")

@@ -6,7 +6,7 @@ exports.findChineseText = void 0;
  */
 const ts = require("typescript");
 const compilerVue = require("vue-template-compiler");
-const const_1 = require("../const");
+const config_1 = require("../config");
 /**
  * 工具函数
  */
@@ -44,7 +44,7 @@ function findTextInVueTemp(ast) {
         if ((_a = ast === null || ast === void 0 ? void 0 : ast.attrsList) === null || _a === void 0 ? void 0 : _a.length) {
             ast.attrsList.forEach((attr) => {
                 const { name, value, start, end } = attr;
-                if (!value.match(const_1.DOUBLE_BYTE_REGEX))
+                if (!value.match(config_1.DOUBLE_BYTE_REGEX))
                     return;
                 // case 属性值是字符串，换言之，属性不是指令 or 自定义指令
                 if (!name.includes("v-") && !name.includes(":") && !name.startsWith("@")) {
@@ -62,7 +62,7 @@ function findTextInVueTemp(ast) {
                     const regx = /\'[^']*\'|\"[^"]*\"|\`[^\`]*\`/gm;
                     let result;
                     while ((result = regx.exec(value))) {
-                        if (result && result[0].match(const_1.DOUBLE_BYTE_REGEX)) {
+                        if (result && result[0].match(config_1.DOUBLE_BYTE_REGEX)) {
                             const text = result[0].slice(1, -1);
                             const range = {
                                 start: end - value.length - 1 + result.index,
@@ -109,7 +109,7 @@ function findTextInVueTemp(ast) {
                 const regx = /\'[^']*\'|\"[^"]*\"|\`[^\`]*\`/gm;
                 let result;
                 while ((result = regx.exec(text))) {
-                    if (result && result[0].match(const_1.DOUBLE_BYTE_REGEX)) {
+                    if (result && result[0].match(config_1.DOUBLE_BYTE_REGEX)) {
                         const text = result[0].slice(1, -1);
                         const range = {
                             start: start + result.index,
@@ -137,7 +137,7 @@ function findTextInVueTemp(ast) {
                     }
                 }
             }
-            else if (const_1.DOUBLE_BYTE_REGEX.test(text)) {
+            else if (config_1.DOUBLE_BYTE_REGEX.test(text)) {
                 const newText = text.replace(/{{([^{}]+)}}/gm, (match, p1) => `\${${p1}}`);
                 arr.push({
                     text: `\`${newText}\``,
@@ -152,7 +152,7 @@ function findTextInVueTemp(ast) {
         }
         else if (!ast.expression && ast.text) {
             // case 普通文本，保留整段文本
-            ast.text.match(const_1.DOUBLE_BYTE_REGEX) &&
+            ast.text.match(config_1.DOUBLE_BYTE_REGEX) &&
                 arr.push({
                     text: ast.text.trim(),
                     range: { start: ast.start, end: ast.end },
@@ -197,7 +197,7 @@ function findTextInVueJS(code, startNum) {
             case ts.SyntaxKind.StringLiteral: {
                 /** 判断 Ts 中的字符串含有中文 */
                 const { text } = node;
-                if (text.match(const_1.DOUBLE_BYTE_REGEX)) {
+                if (text.match(config_1.DOUBLE_BYTE_REGEX)) {
                     const start = node.getStart();
                     const end = node.getEnd();
                     const range = { start: start + startNum, end: end + startNum };
@@ -226,9 +226,7 @@ function findTextInVueJS(code, startNum) {
                 children.forEach((child) => {
                     if (child.kind === ts.SyntaxKind.JsxText) {
                         const text = child.getText();
-                        console.log("ts.SyntaxKind.JsxText");
-                        console.log(text);
-                        if (text.match(const_1.DOUBLE_BYTE_REGEX)) {
+                        if (text.match(config_1.DOUBLE_BYTE_REGEX)) {
                             const start = child.getStart();
                             const end = child.getEnd();
                             const range = { start: start + startNum, end: end + startNum };
@@ -249,7 +247,7 @@ function findTextInVueJS(code, startNum) {
                     .slice(pos, end)
                     .toString()
                     .replace(/\$\{[^\}]+\}/, "");
-                if (templateContent.match(const_1.DOUBLE_BYTE_REGEX)) {
+                if (templateContent.match(config_1.DOUBLE_BYTE_REGEX)) {
                     const start = node.getStart();
                     const end = node.getEnd();
                     const range = { start: start + startNum, end: end + startNum };
@@ -268,7 +266,7 @@ function findTextInVueJS(code, startNum) {
                     let result;
                     const regx = /\'[^']*\'|\"[^"]*\"/gm;
                     while ((result = regx.exec(text))) {
-                        if (result && result[0].match(const_1.DOUBLE_BYTE_REGEX))
+                        if (result && result[0].match(config_1.DOUBLE_BYTE_REGEX))
                             matches.push({
                                 text: result[0].slice(1, -1),
                                 range: {
@@ -284,7 +282,7 @@ function findTextInVueJS(code, startNum) {
             case ts.SyntaxKind.NoSubstitutionTemplateLiteral: {
                 const { pos, end } = node;
                 const templateContent = code.slice(pos, end);
-                if (templateContent.match(const_1.DOUBLE_BYTE_REGEX)) {
+                if (templateContent.match(config_1.DOUBLE_BYTE_REGEX)) {
                     const start = node.getStart();
                     const end = node.getEnd();
                     const range = { start: start + startNum, end: end + startNum };
@@ -315,7 +313,7 @@ function findTextInJS(code) {
             case ts.SyntaxKind.StringLiteral: {
                 /** 判断 Ts 中的字符串含有中文 */
                 const { text } = node;
-                if (text.match(const_1.DOUBLE_BYTE_REGEX)) {
+                if (text.match(config_1.DOUBLE_BYTE_REGEX)) {
                     const start = node.getStart();
                     const end = node.getEnd();
                     const range = { start, end };
@@ -343,7 +341,7 @@ function findTextInJS(code) {
                 children.forEach((child) => {
                     if (child.kind === ts.SyntaxKind.JsxText) {
                         const text = child.getText();
-                        if (text.match(const_1.DOUBLE_BYTE_REGEX)) {
+                        if (text.match(config_1.DOUBLE_BYTE_REGEX)) {
                             const start = child.getStart();
                             const end = child.getEnd();
                             const range = { start: start, end: end };
@@ -363,7 +361,7 @@ function findTextInJS(code) {
                     .slice(pos, end)
                     .toString()
                     .replace(/\$\{[^\}]+\}/, "");
-                if (templateContent.match(const_1.DOUBLE_BYTE_REGEX)) {
+                if (templateContent.match(config_1.DOUBLE_BYTE_REGEX)) {
                     const start = node.getStart();
                     const end = node.getEnd();
                     const range = { start, end };
@@ -381,7 +379,7 @@ function findTextInJS(code) {
                     let result;
                     const regx = /\'[^']*\'|\"[^"]*\"/gm;
                     while ((result = regx.exec(text))) {
-                        if (result && result[0].match(const_1.DOUBLE_BYTE_REGEX))
+                        if (result && result[0].match(config_1.DOUBLE_BYTE_REGEX))
                             matches.push({
                                 text: result[0].slice(1, -1),
                                 range: {
@@ -397,7 +395,7 @@ function findTextInJS(code) {
             case ts.SyntaxKind.NoSubstitutionTemplateLiteral: {
                 const { pos, end } = node;
                 const templateContent = code.slice(pos, end);
-                if (templateContent.match(const_1.DOUBLE_BYTE_REGEX)) {
+                if (templateContent.match(config_1.DOUBLE_BYTE_REGEX)) {
                     const start = node.getStart();
                     const end = node.getEnd();
                     const range = { start, end };

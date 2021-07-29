@@ -7,7 +7,7 @@ exports.extractAll = void 0;
 const _ = require("lodash");
 const path = require("path");
 const randomstring = require("randomstring");
-const const_1 = require("../const");
+const config_1 = require("../config");
 const utils_1 = require("../utils");
 const file_1 = require("./file");
 const findChineseText_1 = require("./findChineseText");
@@ -92,7 +92,7 @@ function extractAll(scanPath = "./", ignorePaths = []) {
                         .filter((letter) => reg.test(letter))
                         .join("");
                     const transText = purifyText || "zhongwen";
-                    let transKey = `${const_1.LAND_ROOT}.${transText}`;
+                    let transKey = `${config_1.LAND_ROOT}.${transText}`;
                     // 添加一位数字位，防止出现前四位相同但是整体文案不同的情况
                     let occurTime = 1;
                     while (utils_1.findMatchValue(currLangObj, transKey) !== curr.text &&

@@ -3,7 +3,7 @@
  */
 import * as fs from "fs-extra";
 import * as _ from "lodash";
-import { I18N_NAME, LAND_DIR } from "../const";
+import { I18N_NAME, LAND_DIR } from "../config";
 import { readFile, writeFile, prettierFile } from "./file";
 import { getFileLangData } from "./getLangData";
 import { TextSnippet } from "./findChineseText";

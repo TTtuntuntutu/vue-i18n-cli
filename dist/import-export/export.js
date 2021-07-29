@@ -1,14 +1,13 @@
 "use strict";
 /**
- * @author Harden
  * @description 导出待翻译文件
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.exportMessages = void 0;
 const d3_dsv_1 = require("d3-dsv");
 const fs = require("fs");
-const config_1 = require("./config");
-const getLangData_1 = require("./extract/getLangData");
+const config_1 = require("../config");
+const getLangData_1 = require("../extract/getLangData");
 /**
  *
  * @param file 导出翻译文件路径
@@ -27,10 +26,10 @@ function exportMessages(file, lang) {
             return [key, message, ""];
         });
         if (messagesToTranslate.length === 0) {
-            console.log("All the messages have been translated.");
+            console.log(`All the messages in ${lang} have been translated.`);
             return;
         }
-        messagesToTranslate.unshift(["key", "中文", "英文"]);
+        messagesToTranslate.unshift(["key", "中文", config_1.langDisplayInTsv[lang]]);
         const content = d3_dsv_1.tsvFormatRows(messagesToTranslate);
         const sourceFile = file || `${lang}.tsv`;
         fs.writeFileSync(sourceFile, content);

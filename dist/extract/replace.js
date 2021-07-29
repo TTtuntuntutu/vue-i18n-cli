@@ -6,7 +6,7 @@ exports.prettierFile = exports.generateNewLangFile = exports.replaceAndUpdate = 
  */
 const fs = require("fs-extra");
 const _ = require("lodash");
-const const_1 = require("../const");
+const config_1 = require("../config");
 const file_1 = require("./file");
 Object.defineProperty(exports, "prettierFile", { enumerable: true, get: function () { return file_1.prettierFile; } });
 const getLangData_1 = require("./getLangData");
@@ -97,14 +97,14 @@ function replaceAndUpdate(filePath, arg, key, validateDuplicate) {
             break;
         }
         case Situation.JavaScriptString:
-            newCode = `${code.slice(0, start)}window.${const_1.I18N_NAME}.$t('${key}')${code.slice(end)}`;
+            newCode = `${code.slice(0, start)}window.${config_1.I18N_NAME}.$t('${key}')${code.slice(end)}`;
             break;
         case Situation.JavaScriptJsx:
-            newCode = `${code.slice(0, start)}{window.${const_1.I18N_NAME}.$t('${key}')}${code.slice(end)}`;
+            newCode = `${code.slice(0, start)}{window.${config_1.I18N_NAME}.$t('${key}')}${code.slice(end)}`;
             break;
         case Situation.JavaScriptExprTemplate: {
             const varInStrs = rawText.match(/(\$\{[^\}]+?\})/g).map((i) => i.slice(2, -1));
-            newCode = `${code.slice(0, start)}window.${const_1.I18N_NAME}.$t('${key}',[${varInStrs.join(",")}])${code.slice(end)}`;
+            newCode = `${code.slice(0, start)}window.${config_1.I18N_NAME}.$t('${key}',[${varInStrs.join(",")}])${code.slice(end)}`;
             console.log(`${filePath} may need scan again!`);
             break;
         }
@@ -152,7 +152,7 @@ function updateLangFiles(keyValue, text, validateDuplicate) {
     }
     const [fileName, ...fullKeyArrs] = keyValue.split(".");
     const fullKey = fullKeyArrs.join(".");
-    const targetFilename = `${const_1.LAND_DIR["zh"]}/${fileName}.json`;
+    const targetFilename = `${config_1.LAND_DIR["zh"]}/${fileName}.json`;
     if (!fs.existsSync(targetFilename)) {
         fs.writeFileSync(targetFilename, generateNewLangFile(fullKey, text.trim()));
         console.log(`成功新建语言文件 ${targetFilename}`);

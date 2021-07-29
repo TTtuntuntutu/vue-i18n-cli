@@ -3,7 +3,7 @@
  */
 import * as fs from "fs";
 import * as globby from "globby";
-import { I18N_GLOB } from "../const";
+import { I18N_GLOB } from "../config";
 import { flatten } from "../utils";
 
 /**

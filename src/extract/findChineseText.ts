@@ -3,7 +3,7 @@
  */
 import * as ts from "typescript";
 import * as compilerVue from "vue-template-compiler";
-import { DOUBLE_BYTE_REGEX } from "../const";
+import { DOUBLE_BYTE_REGEX } from "../config";
 
 export interface TextSnippet {
   text: string;
@@ -253,8 +253,6 @@ function findTextInVueJS(code: string, startNum: number) {
         children.forEach((child) => {
           if (child.kind === ts.SyntaxKind.JsxText) {
             const text = child.getText();
-            console.log("ts.SyntaxKind.JsxText");
-            console.log(text);
 
             if (text.match(DOUBLE_BYTE_REGEX)) {
               const start = child.getStart();

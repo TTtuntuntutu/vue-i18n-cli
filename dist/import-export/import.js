@@ -2,16 +2,15 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.importMessages = void 0;
 /**
- * @author Harden
  * @description 导入翻译文件
  */
 const d3_dsv_1 = require("d3-dsv");
-const getLangData_1 = require("./extract/getLangData");
+const getLangData_1 = require("../extract/getLangData");
 const fs = require("fs");
 const path = require("path");
 const _ = require("lodash");
-const config_1 = require("./config");
-const replace_1 = require("./extract/replace");
+const config_1 = require("../config");
+const replace_1 = require("../extract/replace");
 /**
  * 获取导入文件原始数据
  * @param file
@@ -74,7 +73,7 @@ function writeMessagesToFile(messages, file, lang) {
         fs.writeFileSync(dstFile, replace_1.prettierFile(generateNewLangFile(messages, obj)));
     }
 }
-function importMessages(file, lang) {
+function importMessages(file, lang = "en") {
     let messagesToImport = getMessagesToImport(file);
     const allMessages = getLangData_1.getFlattenLangData();
     messagesToImport = _.pickBy(messagesToImport, (message, key) => allMessages.hasOwnProperty(key));

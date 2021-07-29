@@ -7,9 +7,9 @@ exports.findUnUsed = void 0;
 const fs = require("fs");
 const _ = require("lodash");
 const path = require("path");
-const config_1 = require("./config");
-const file_1 = require("./extract/file");
-const getLangData_1 = require("./extract/getLangData");
+const config_1 = require("../config");
+const file_1 = require("../extract/file");
+const getLangData_1 = require("../extract/getLangData");
 /**
  * 输出未使用keys
  * @param isDelete 是否自动删除不需要的翻译文案
