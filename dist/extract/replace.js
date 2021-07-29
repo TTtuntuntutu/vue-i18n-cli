@@ -2,7 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.prettierFile = exports.generateNewLangFile = exports.replaceAndUpdate = void 0;
 /**
- * @author Harden
  * @desc 更新文件
  */
 const fs = require("fs-extra");

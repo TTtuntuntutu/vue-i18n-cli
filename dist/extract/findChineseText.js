@@ -2,16 +2,15 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.findChineseText = void 0;
 /**
- * @author harden
  * @desc 利用 Ast 查找对应文件中的中文文案
  */
 const ts = require("typescript");
 const compilerVue = require("vue-template-compiler");
 const const_1 = require("../const");
 /**
- * 字符串去重，在处理脚本内的模版字符串时用到
- * @param matches
+ * 工具函数
  */
+// 字符串去重，在处理脚本内的模版字符串时用到
 function deduplicateStr(matches) {
     const repeatMatches = matches.filter((m) => m.ifRepeat);
     return repeatMatches.length
@@ -23,14 +22,12 @@ function deduplicateStr(matches) {
 }
 /**
  * 查找 Vue文件 中文
- * @param code
  */
 function findTextInVue(code) {
-    // const { ast: templateInVue } = compilerVue.compile(code.toString(), {
-    //   outputSourceRange: true,
-    // });
-    // const textsInTemplate = findTextInVueTemp(templateInVue);
-    const textsInTemplate = [];
+    const { ast: templateInVue } = compilerVue.compile(code.toString(), {
+        outputSourceRange: true,
+    });
+    const textsInTemplate = findTextInVueTemp(templateInVue);
     let textsInScript = [];
     const sfc = compilerVue.parseComponent(code.toString());
     if (sfc.script) {
@@ -307,6 +304,9 @@ function findTextInVueJS(code, startNum) {
     matches = deduplicateStr(matches);
     return matches;
 }
+/**
+ * 查找 JavaScript文件 中文
+ */
 function findTextInJS(code) {
     let matches = [];
     const ast = ts.createSourceFile("", code, ts.ScriptTarget.ES2015, true, ts.ScriptKind.TSX);

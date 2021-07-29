@@ -1,5 +1,4 @@
 /**
- * @author harden
  * @desc 利用 Ast 查找对应文件中的中文文案
  */
 import * as ts from "typescript";
@@ -19,9 +18,9 @@ export interface TextSnippet {
 }
 
 /**
- * 字符串去重，在处理脚本内的模版字符串时用到
- * @param matches
+ * 工具函数
  */
+// 字符串去重，在处理脚本内的模版字符串时用到
 function deduplicateStr(matches) {
   const repeatMatches = matches.filter((m) => m.ifRepeat);
 
@@ -38,16 +37,13 @@ function deduplicateStr(matches) {
 
 /**
  * 查找 Vue文件 中文
- * @param code
  */
 function findTextInVue(code: string) {
-  // const { ast: templateInVue } = compilerVue.compile(code.toString(), {
-  //   outputSourceRange: true,
-  // });
+  const { ast: templateInVue } = compilerVue.compile(code.toString(), {
+    outputSourceRange: true,
+  });
 
-  // const textsInTemplate = findTextInVueTemp(templateInVue);
-
-  const textsInTemplate = [];
+  const textsInTemplate = findTextInVueTemp(templateInVue);
 
   let textsInScript = [];
   const sfc = compilerVue.parseComponent(code.toString());
@@ -345,6 +341,9 @@ function findTextInVueJS(code: string, startNum: number) {
   return matches;
 }
 
+/**
+ * 查找 JavaScript文件 中文
+ */
 function findTextInJS(code: string) {
   let matches = [];
   const ast = ts.createSourceFile("", code, ts.ScriptTarget.ES2015, true, ts.ScriptKind.TSX);

@@ -1,7 +1,6 @@
 "use strict";
 /**
- * @author Harden
- * @description 文件相关
+ * @description 文件处理相关
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.prettierFile = exports.isFile = exports.isDirectory = exports.writeFile = exports.readFile = exports.getSpecifiedFiles = void 0;

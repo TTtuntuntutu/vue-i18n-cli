@@ -1,5 +1,5 @@
 /**
- * @author Harden
+ * @desc extract命令入口文件
  */
 import * as _ from "lodash";
 import * as path from "path";
@@ -51,107 +51,100 @@ function findAllChineseText(scanPath: string, ignorePaths: string[]): TextsInFil
 function extractAll(scanPath = "./", ignorePaths: string[] = []): void {
   const allTargetStrs = findAllChineseText(scanPath, ignorePaths);
 
-  // if (allTargetStrs.length === 0) {
-  //   console.log("没有发现可替换的文案！");
-  //   return;
-  // }
+  if (allTargetStrs.length === 0) {
+    console.log("没有发现可替换的文案！");
+    return;
+  }
 
   // 以文件维度去处理
-  // allTargetStrs.forEach((item) => {
-  //   const currentFilename = item.file;
-  //   const targetStrs = item.texts;
+  allTargetStrs.forEach((item) => {
+    const currentFilename = item.file;
+    const targetStrs = item.texts;
 
-  //   // 当前翻译信息
-  //   const currLangObj = getFlattenLangData();
+    // 当前已有 翻译数据
+    const currLangObj = getFlattenLangData();
 
-  //   // 缓存
-  //   const virtualMemory = {};
+    // 缓存
+    const virtualMemory = {};
 
-  //   // key信息：取前4位中文转为拼音
-  //   const translateTexts = targetStrs.reduce((prev, curr) => {
-  //     // 避免翻译的字符里包含数字或者特殊字符等情况
-  //     const reg = /[^a-zA-Z\x00-\xff]+/g;
-  //     const findText = curr.text.match(reg);
-  //     const transText = findText ? findText.join("").slice(0, 4) : "中文符号";
-  //     return prev.concat(textToPinyin(transText));
-  //   }, []);
+    // key信息：取前4位中文转为拼音
+    const translateTexts = targetStrs.reduce((prev, curr) => {
+      // 避免翻译的字符里包含数字或者特殊字符等情况
+      const reg = /[^a-zA-Z\x00-\xff]+/g;
+      const findText = curr.text.match(reg);
+      const transText = findText ? findText.join("").slice(0, 4) : "中文符号";
+      return prev.concat(textToPinyin(transText));
+    }, []);
 
-  //   //确定key
-  //   const replaceableStrs = targetStrs.reduce((prev, curr, i) => {
-  //     if (curr.notNewKey) {
-  //       return prev.concat({
-  //         target: curr,
-  //       });
-  //     }
+    //确定key
+    const replaceableStrs = targetStrs.reduce((prev, curr, i) => {
+      if (curr.notNewKey) {
+        return prev.concat({
+          target: curr,
+        });
+      }
 
-  //     if (!virtualMemory[curr.text]) {
-  //       const key = findMatchKey(currLangObj, curr.text);
-  //       if (key) {
-  //         virtualMemory[curr.text] = key; //缓存
-  //         return prev.concat({
-  //           target: curr,
-  //           key,
-  //         });
-  //       } else {
-  //         //生成key
-  //         const uuidKey = `${randomstring.generate({
-  //           length: 4,
-  //           charset: "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM",
-  //         })}`;
+      if (!virtualMemory[curr.text]) {
+        const key = findMatchKey(currLangObj, curr.text);
+        if (key) {
+          virtualMemory[curr.text] = key; //缓存
+          return prev.concat({
+            target: curr,
+            key,
+          });
+        } else {
+          //key生成的替补选手
+          const uuidKey = `${randomstring.generate({
+            length: 4,
+            charset: "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM",
+          })}`;
 
-  //         const handleText = translateTexts[i] ? _.camelCase(translateTexts[i] as string) : uuidKey;
-  //         const reg = /[a-zA-Z]+/;
-  //         // 对于翻译后的英文再次过滤，只保留英文字符
-  //         const purifyText = handleText
-  //           .split("")
-  //           .filter((letter) => reg.test(letter))
-  //           .join("");
-  //         const transText = purifyText || "zhongwen";
-  //         let transKey = `${LAND_ROOT}.${transText}`;
+          const handleText = translateTexts[i] ? _.camelCase(translateTexts[i] as string) : uuidKey;
+          const reg = /[a-zA-Z]+/;
+          // 对于翻译后的英文再次过滤，只保留英文字符
+          const purifyText = handleText
+            .split("")
+            .filter((letter) => reg.test(letter))
+            .join("");
+          const transText = purifyText || "zhongwen";
+          let transKey = `${LAND_ROOT}.${transText}`;
 
-  //         // 防止出现前四位相同但是整体文案不同的情况
-  //         let occurTime = 1;
-  //         while (
-  //           findMatchValue(currLangObj, transKey) !== curr.text &&
-  //           _.keys(currLangObj).includes(`${transKey}${occurTime >= 2 ? occurTime : ""}`)
-  //         ) {
-  //           occurTime++;
-  //         }
-  //         if (occurTime >= 2) {
-  //           transKey = `${transKey}${occurTime}`;
-  //         }
+          // 添加一位数字位，防止出现前四位相同但是整体文案不同的情况
+          let occurTime = 1;
+          while (
+            findMatchValue(currLangObj, transKey) !== curr.text &&
+            _.keys(currLangObj).includes(`${transKey}${occurTime >= 2 ? occurTime : ""}`)
+          ) {
+            occurTime++;
+          }
+          if (occurTime >= 2) {
+            transKey = `${transKey}${occurTime}`;
+          }
 
-  //         //缓存&记录
-  //         virtualMemory[curr.text] = transKey;
-  //         currLangObj[transKey] = curr.text;
-  //         return prev.concat({
-  //           target: curr,
-  //           key: transKey,
-  //         });
-  //       }
-  //     } else {
-  //       return prev.concat({
-  //         target: curr,
-  //         key: virtualMemory[curr.text],
-  //       });
-  //     }
-  //   }, []);
+          //缓存&记录
+          virtualMemory[curr.text] = transKey;
+          currLangObj[transKey] = curr.text;
+          return prev.concat({
+            target: curr,
+            key: transKey,
+          });
+        }
+      } else {
+        return prev.concat({
+          target: curr,
+          key: virtualMemory[curr.text],
+        });
+      }
+    }, []);
 
-  //   //替换
-  //   // replaceableStrs.reduce((prev, obj) => {
-  //   //   return prev.then(() => {
-  //   //     return replaceAndUpdate(currentFilename, obj.target, obj.key, false)
-  //   //   })
-  //   // }, Promise.resolve())
-
-  //   try {
-  //     replaceableStrs.forEach((obj) => {
-  //       replaceAndUpdate(currentFilename, obj.target, obj.key, false);
-  //     });
-  //   } catch (error) {
-  //     console.log(`${currentFilename}替换失败，存在问题：${error}`);
-  //   }
-  // });
+    try {
+      replaceableStrs.forEach((obj) => {
+        replaceAndUpdate(currentFilename, obj.target, obj.key, false);
+      });
+    } catch (error) {
+      console.log(`${currentFilename}替换失败，存在问题：${error}`);
+    }
+  });
 }
 
 export { extractAll };

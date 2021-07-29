@@ -2,7 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getFileLangData = exports.getFlattenLangData = void 0;
 /**
- * @author harden
  * @desc 获取语言文件：语言维度和文件维度
  */
 const fs = require("fs");
@@ -26,10 +25,10 @@ exports.getFileLangData = getFileLangData;
  * @param fileName 文件名
  */
 function getLangJson(fileName) {
-    const obj = fs.readFileSync(fileName, { encoding: 'utf8' });
+    const obj = fs.readFileSync(fileName, { encoding: "utf8" });
     let jsObj = {};
     try {
-        jsObj = eval('(' + obj + ')');
+        jsObj = eval("(" + obj + ")");
     }
     catch (err) {
         console.log(obj);
@@ -41,9 +40,9 @@ function getLangData(lang) {
     const paths = globby.sync(const_1.I18N_GLOB[lang]);
     const langObj = paths.reduce((prev, curr) => {
         const filename = curr
-            .split('/')
+            .split("/")
             .pop()
-            .replace(/\.json?$/, '');
+            .replace(/\.json?$/, "");
         const fileContent = getLangJson(curr);
         const jsObj = fileContent;
         if (Object.keys(jsObj).length === 0) {
@@ -53,7 +52,7 @@ function getLangData(lang) {
     }, {});
     return langObj;
 }
-function getFlattenLangData(lang = 'zh') {
+function getFlattenLangData(lang = "zh") {
     const langObj = getLangData(lang);
     const finalLangObj = utils_1.flatten(langObj);
     return finalLangObj;

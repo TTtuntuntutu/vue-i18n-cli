@@ -1,5 +1,4 @@
 /**
- * @author Harden
  * @desc 更新文件
  */
 import * as fs from "fs-extra";
@@ -7,6 +6,7 @@ import * as _ from "lodash";
 import { I18N_NAME, LAND_DIR } from "../const";
 import { readFile, writeFile, prettierFile } from "./file";
 import { getFileLangData } from "./getLangData";
+import { TextSnippet } from "./findChineseText";
 
 enum Situation {
   ScriptString,
@@ -22,17 +22,6 @@ enum Situation {
   TemplateExprString,
   TemplateAttrString,
   TemplateExprInterpolation,
-}
-
-interface Fragment {
-  text: string;
-  rawText?: string;
-  range: {
-    start: number;
-    end: number;
-  };
-  type: string[];
-  attrName?: string;
 }
 
 /**
@@ -78,7 +67,7 @@ function generateNewLangFile(key: string, value: string): string {
  */
 function replaceAndUpdate(
   filePath: string,
-  arg: Fragment,
+  arg: TextSnippet,
   key: string,
   validateDuplicate: boolean
 ): void | Promise<never> {

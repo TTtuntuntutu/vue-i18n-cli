@@ -1,6 +1,5 @@
 /**
- * @author Harden
- * @description 文件相关
+ * @description 文件处理相关
  */
 
 import * as fs from "fs";
