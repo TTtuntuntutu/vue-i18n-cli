@@ -1,0 +1,19 @@
+name: learn-github-actions
+# events, push event: jobs run every time someone pushes a change to the repository
+on: [push]  
+# jobs groups
+jobs:
+  # job name
+  check-bats-version:
+    runs-on: ubuntu-latest
+    steps:
+      # step 1: checks out your repository and downloads it to the runner
+      - uses: actions/checkout@v2
+      # step 2: install the specified version of the node software package on the runner, which gives you access to the npm command
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+      # step 3: command
+      - run: npm install -g bats
+      # step 3: command
+      - run: bats -v
