@@ -1,10 +1,10 @@
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
 
-i18n(Internationalization)，即国际化，在现在业务开发中是很常见的需求。一般在选择对应前端开发框架的i18n库（比如[vue i18n](https://kazupon.github.io/vue-i18n/)、[react-i18next](https://github.com/i18next/react-i18next)）、编辑器插件的辅助（比如[vscode 插件 i18n Ally](https://marketplace.visualstudio.com/items?itemName=antfu.i18n-ally)）后，就可以上手开发了。然而这个过程并不轻松，在代码文件找文案、为文案生成key标识、写入翻译文件、替换源代码、和业务开发流程的分割等，都导致这是一件非常头疼的问题。
+i18n(Internationalization)，即国际化，在现在业务开发中是很常见的需求。一般在选择对应前端开发框架的i18n库（比如[vue i18n](https://kazupon.github.io/vue-i18n/)、[react-i18next](https://github.com/i18next/react-i18next)）、编辑器插件的辅助（比如[vscode 插件 i18n Ally](https://marketplace.visualstudio.com/items?itemName=antfu.i18n-ally)）后，就可以上手开发了。然而这个过程并不轻松，在代码文件找文案、为文案生成key标识、写入翻译文件、替换源代码、和业务开发流程的分割等，都导致这是一件非常头疼的事情。
 
 
 
-参考 [alibaba/kiwi/kiwi-cli](https://github.com/alibaba/kiwi/tree/master/kiwi-cli)，深挖vue2.x项目场景的落地，开发了Node命令行工具vue-i18n-extract，由它来负责上述的繁琐过程。
+参考 [alibaba/kiwi/kiwi-cli](https://github.com/alibaba/kiwi/tree/master/kiwi-cli)，深挖vue2.x项目场景的落地，开发了Node命令行工具vue-i18n-extract，由它来负责上述的繁琐过程。优点在于场景覆盖全，经过实际生产项目检验。
 
 注意，vue-i18n-extract基于项目原始文案是中文文案。
 
