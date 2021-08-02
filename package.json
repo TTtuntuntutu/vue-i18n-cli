@@ -1,16 +1,16 @@
 {
-  "name": "mondo-cli",
+  "name": "vue-i18n-extract",
   "version": "1.0.0",
-  "description": "Command line tool to retrieve Chinese in Vue2.x project",
+  "description": "Command line tool to extract Chinese in Vue2.x i18n project",
   "main": "index.js",
   "scripts": {
     "dev": "tsc --watch",
     "prepublish": "tsc"
-  },
-  "author": "Harden",
-  "license": "ISC",
+  }, 
+  "author": "Renyi Xie",
+  "license": "ISC", 
   "bin": {
-    "extract": "dist/index.js"
+    "vue-i18n": "dist/index.js"
   },
   "dependencies": {
     "acorn": "^7.3.1",

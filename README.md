@@ -1,226 +1,47 @@
-## Mondo解决了什么问题
+[![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
 
-方案解决的问题：Vue2.x项目的多语言解决方案。基于 [vue-i18n](https://kazupon.github.io/vue-i18n/zh/introduction.html) ，命令行工具 mondo-cli 一键提取中文，自动生成key并且替换，一键导入导出翻译文件，查询不再使用文案，同时使用[vscode 插件 i18n Ally](https://marketplace.visualstudio.com/items?itemName=antfu.i18n-ally) 帮助查看、管理文案。
+i18n(Internationalization)，即国际化，在现在业务开发中是很常见的需求。一般在选择对应前端开发框架的i18n库（比如[vue i18n](https://kazupon.github.io/vue-i18n/)、[react-i18next](https://github.com/i18next/react-i18next)）、编辑器插件的辅助（比如[vscode 插件 i18n Ally](https://marketplace.visualstudio.com/items?itemName=antfu.i18n-ally)）后，就可以上手开发了。然而这个过程并不轻松，在代码文件找文案、为文案生成key标识、写入翻译文件、替换源代码、和业务开发流程的分割等，都导致这是一件非常头疼的问题。
 
-![locale](/img/extract.gif)
 
-(p.s. `if(gif不清晰){打开img文件夹有视频}` )
 
-方案提供的能力：
+参考 [alibaba/kiwi/kiwi-cli](https://github.com/alibaba/kiwi/tree/master/kiwi-cli)，深挖vue2.x项目场景的落地，开发了Node命令行工具vue-i18n-extract，由它来负责上述的繁琐过程。
 
-- [x] 一键提取 Vue 2.x 项目中的中文，自动生成key替换
-- [x] 导出指定语种的待翻译文件
-- [x] 导入指定语种的翻译完成文件
-- [x] 查询项目中已不使用文案，支持自动化删除
-- [x] 查询是否还有未提取的中文文案，展示文件路径
-- [x] 支持多语言，不仅限于中英文
+注意，vue-i18n-extract基于项目原始文案是中文文案。
 
 
 
-方案目前存在的问题：
 
-- [ ] 搜索麻烦：需要先通过文案找到key，再通过key定位具体位置
-- [ ] 未考虑[组件插值](https://kazupon.github.io/vue-i18n/zh/guide/interpolation.html#%E5%9F%BA%E6%9C%AC%E7%94%A8%E6%B3%95)场景（可做，但场景不多）
-- [ ] 中文文案个别边缘情况未考虑
+## 功能
 
+自动化提取：
 
+- [x] 一键提取 Vue 2.x 项目中的中文，自动生成key，写入翻译json文件，在源代码替换；
 
-## 使用文档
+导入导出：
 
-### 安装
+- [x] 导出指定语种的待翻译文件，格式为`.tsv`；
+- [x] 导入指定语种的翻译完成文件，格式为`.tsv`；
 
-- npm包：vue-i18n（当前版本：`^8.17.5`）
-- vscode插件：[i18n Ally](https://marketplace.visualstudio.com/items?itemName=antfu.i18n-ally)
-- mondo-cli
+本地文案管理：
 
+- [x] 输出项目中已不使用文案，支持自动化删除；
+- [x] 输出存在未提取的中文文案的文件路径；
 
+其他：
 
-### 翻译配置
+- [x] 支持多语言，不仅限于中英文；
 
-i18n Ally配置添加，` .vscode/settings.json` ：
 
-```json
-{
-  "i18n-ally.localesPaths": "locale",
-  "i18n-ally.displayLanguage": "zh",
-  "i18n-ally.namespace": true,
-  "i18n-ally.keystyle": "nested"
-}
-```
 
+使用上存在的问题：
 
+- [ ] 使用key替换源代码中的中文文案后，搜索中文文案所在位置麻烦，需要先通过文案找到key，再通过key定位具体位置；
+- [ ] 未考虑[组件插值](https://kazupon.github.io/vue-i18n/zh/guide/interpolation.html#%E5%9F%BA%E6%9C%AC%E7%94%A8%E6%B3%95)场景（场景较罕见）；
 
-根目录创建 `locale` 文件夹：
 
-![locale](/img/locale.png)
 
+## 使用说明
 
-
-
-
-创建`i18n.js`，为vue-i18n导入翻译数据，当前建立在`.src`下，基于webpack api `require`：
-
-```javascript
-import Vue from 'vue'
-import VueI18n from 'vue-i18n'
-
-Vue.use(VueI18n)
-
-function loadLocaleMessages() {
-  const locales = require.context('../locale', true, /[A-Za-z0-9-_,\s]+\.json$/i)
-  const messages = {}
-  locales.keys().forEach(key => {
-    const file_matched = key.match(/([A-Za-z0-9-_]+)\./i)
-    const lang_matched = key.match(/\.\/([A-Za-z0-9-_]+)\//i)
-
-    if (file_matched && file_matched.length > 1 && lang_matched && lang_matched.length > 1) {
-      const filename = file_matched[1]
-      const lang = lang_matched[1]
-
-      messages[lang] = messages[lang] ? { ...messages[lang], [filename]: locales(key) } : { [filename]: locales(key) }
-    }
-  })
-
-  console.log(messages)
-  return messages
-}
-
-const i18n = new VueI18n({
-  locale: process.env.VUE_APP_I18N_LOCALE || 'zh',
-  fallbackLocale: process.env.VUE_APP_I18N_FALLBACK_LOCALE || 'zh',
-  messages: loadLocaleMessages()
-})
-
-window.i18n = new Vue({ i18n })
-
-export default i18n
-```
-
-- 其中 `process.env.VUE_APP_I18N_LOCALE` 是配置的环境变量；
-
-
-
-在 `./src/main.js` 导入 `i18n.js` ，导入位置放在其他需要i18n作用文件之前，比如：
-
-```javascript
-import Vue from 'vue'
-import App from './App'
-import i18n from './i18n'
-import router from './router'
-import store from './store'
-
-new Vue({
-  i18n,
-  render: h => h(App),
-}).$mount('#app')
-```
-
-
-
-### 切换语言能力
-
-语言信息作为全局变量存储(Vuex or Storage皆可)，vue-i18n提供了[切换语言环境](https://kazupon.github.io/vue-i18n/zh/guide/locale.html)的api，但它不支持`vue#props#default`文案切换。我们在项目中使用了Vue Router api 重刷：`this.$router.go(0)`。
-
-
-
-### mondo-cli
-
-![mondo](/img/mondo.png)
-
-
-
-说明
-
-- `extract`/`unscanned`：
-
-  - `scanPath` 要扫描的文件夹或者文件路径；
-  - `ignorePaths` 忽略的扫描文件夹或者文件路径，支持多个；
-
-- `export`/`import`：
-
-  - `file`：导出文件名，格式为`.tsv`；
-  - `lang`：导出语言语种，默认是`en`；
-
-  
-
-
-
-### 前提约定
-
-#### vue#script顶格写
-
-- 正确：
-
-  ```javascript
-  <script>
-  export default {
-    name:'App',
-    data() {
-      return {
-        hello: '你好'
-      }
-    },
-  }
-  <script>
-  ```
-
-- 错误：
-
-  ```javascript
-  <script>
-    export default {
-      name:'App',
-      data() {
-        return {
-          hello: '你好'
-        }
-      },
-    }
-  </script>
-  ```
-
-
-
-
-#### 避免"不合理"情况
-
-1. javascript属性名存在中文
-
-   ```javascript
-   export const mainInfoLanguage = {
-     tuya: {
-       '你好世界': 'Hello World!'
-     }
-   }
-   ```
-
-2. 模版字符串内不能嵌套模版字符串
-
-  ​     
-
-
-#### 未考虑情况
-
-1. jsx仅考虑以下两种情况：
-
-    ```jsx
-    jsxData: (
-      <el-form>
-        <el-form-item label="人民币：">10元</el-form-item>
-      </el-form>
-    ) 
-    ```
-
-2. `v-if`、`v-else-if` 判断逻辑中存中文需要手动替换，或者将该逻辑放在vue script中，因为ast中拿不到`v-if`的位置：
-
-   ```html
-   <p v-if="greeting === '你好'">
-     你好
-   </p>
-   ```
-
-3. 未处理函数式组件 
-
-
+参见：[这里！](https://github.com/TTtuntuntutu/Mondo-cli/wiki/%E4%BD%BF%E7%94%A8%E6%96%87%E6%A1%A3)
 
 

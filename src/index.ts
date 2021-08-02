@@ -23,11 +23,14 @@ function spining(text, callback) {
 
 commander
   .version("1.0.0")
-  .option("--extract [scanPath] [ignorePaths...]", "提取指定文件夹下的中文")
+  .option(
+    "--extract [scanPath] [ignorePaths...]",
+    "提取指定文件夹下的中文，自动生成key，写入文案json文件，替换原文件"
+  )
   .option("--export [file] [lang]", "导出未翻译的文案")
   .option("--import [file] [lang]", "导入翻译文案")
-  .option("--unused [isDelete]", "查询未使用的文案，支持自动删除")
-  .option("--unscanned [scanPath] [ignorePaths...]", "查询指定文件夹下，仍存在中文的文件")
+  .option("--unused [isDelete]", "输出未使用的文案，支持自动删除")
+  .option("--unscanned [scanPath] [ignorePaths...]", "输出指定文件夹下，仍存在中文的文件")
   .parse(process.argv);
 
 if (commander.extract) {
