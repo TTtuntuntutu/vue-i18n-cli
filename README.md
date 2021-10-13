@@ -36,7 +36,6 @@ i18n(Internationalization)，即国际化，在现在业务开发中是很常见
 使用上存在的问题：
 
 - [ ] 使用key替换源代码中的中文文案后，搜索中文文案所在位置麻烦，需要先通过文案找到key，再通过key定位具体位置；
-- [ ] 未考虑[组件插值](https://kazupon.github.io/vue-i18n/zh/guide/interpolation.html#%E5%9F%BA%E6%9C%AC%E7%94%A8%E6%B3%95)场景（场景较罕见）；
 
 
 
